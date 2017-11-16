@@ -1,9 +1,14 @@
 'use strict';
-//Include crypto to generate the id
-var Promise = require('promise');
-var MongoClient = require('mongodb').MongoClient;
 
-var url = 'mongodb://localhost:27017/local';
+//Include crypto to generate the id
+const Promise = require('promise'),
+  MongoClient = require('mongodb').MongoClient,
+  appConfig = require('config');
+
+// Hack to delete swagger object that's been added automatically
+delete appConfig.swagger;
+
+const host = appConfig.get('db.host');
 
 module.exports = (function () {
 
@@ -16,7 +21,7 @@ module.exports = (function () {
   function init() {
     return new Promise((resolve, reject) => {
       console.log('DB instance not ready yet');
-      MongoClient.connect(url, function(err, db) {
+      MongoClient.connect(host, function(err, db) {
         if (err) reject(err);
         console.log('DB instance initialized');
 

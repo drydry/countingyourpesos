@@ -3,15 +3,12 @@
 var SwaggerExpress = require('swagger-express-mw');
 var app = require('express')();
 var db = require('./config/db');
-module.exports = app; // for testing
 
-var config = {
+var conf = {
   appRoot: __dirname // required config
 };
 
-var url = 'mongodb://localhost:27017/local';
-
-SwaggerExpress.create(config, function(err, swaggerExpress) {
+SwaggerExpress.create(conf, function(err, swaggerExpress) {
   if (err) { throw err; }
 
   db.getInstance().then(instance => {
@@ -28,3 +25,5 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     console.log(err);
   });
 });
+
+module.exports = app; // for testing
