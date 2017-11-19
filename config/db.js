@@ -28,17 +28,31 @@ module.exports = (function () {
         instance = {
           getAll(collectionName){
             return new Promise((resolve, reject) => {
-              var collection = db.collection(collectionName);
+              const collection = db.collection(collectionName);
               collection.find().toArray(function(err, docs) {
                 if(err) reject(err);
-                resolve(docs);
+
+                const response = {
+                  "collection" : collectionName,
+                  "data" : docs
+                }
+
+                resolve(response);
               });
             });
           },
-          save(doc){
+          save(doc, collectionName){
             return new Promise((resolve, reject) => {
-              console.log('save new doc');
-              resolve('doc');
+              const collection = db.collection(collectionName);
+              collection.insertOne(doc, function(err, res) {
+                if (err) reject(err);
+                
+                const response = {
+                  "collection": collectionName,
+                  "data": doc
+                };
+                resolve(response);
+              });
             });
           },
           find(id){

@@ -26,7 +26,8 @@ const db = require('../../config/db');
   we specify that in the exports of this module that 'hello' maps to the function named 'hello'
  */
 module.exports = {
-  index:index
+  index:index,
+  insert: insert
 };
 
 /*
@@ -50,5 +51,14 @@ function index(req, res) {
 }
 
 function insert( req, res) {
+  const amount = req.swagger.params.amount.value;
+  console.log(amount);
 
+  db.getInstance().then(instance => {
+    instance.save(amount, 'amounts').then(doc => {
+      res.send(doc);
+    }).catch(err => {
+      res.json(err.message);
+    });
+  });
 }

@@ -19,10 +19,31 @@ produces:
   - application/json
 paths:
   /amounts:
-    x-swagger-router-controller: index
+    x-swagger-router-controller: amounts
     get:
       description: Return all amounts
       operationId: index
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      description: Save a new entry
+      operationId: insert
+      parameters:
+        - name: amount
+          in: body
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Amount"
+          required: true  
       responses:
         "200":
           description: Success
@@ -74,15 +95,15 @@ definitions:
     properties:
       message:
         type: string
-  Entry:
+  Amount:
     type: object
     required:
-      - amount
+      - value
       - processedDate
     properties:
-      amount:
+      value:
         type: number
-        description: The amount to input
+        description: Amount value
       description:
         type: string
         description: Description
