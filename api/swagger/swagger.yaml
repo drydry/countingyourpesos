@@ -42,7 +42,7 @@ paths:
           in: body
           schema:
             # a pointer to a definition
-            $ref: "#/definitions/Amount"
+            $ref: "#/definitions/AmountForCreation"
           required: true  
       responses:
         "200":
@@ -76,19 +76,20 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /hello:
-    # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
-    get:
-      description: Returns 'Hello' to the caller
-      # used as the method name of the controller
-      operationId: hello
+    post:
+      description: Update a specific amount
+      operationId: update
       parameters:
-        - name: name
-          in: query
-          description: The name of the person to whom to say hello
-          required: false
-          type: string
+        - name: id
+          in: path
+          required: true
+          type: "string"
+        - name: amount
+          in: body
+          required: true
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/AmountForUpdate"
       responses:
         "200":
           description: Success
@@ -99,7 +100,7 @@ paths:
         default:
           description: Error
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: "#/definitions/ErrorResponse"            
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -118,9 +119,6 @@ definitions:
         type: string
   Amount:
     type: object
-    required:
-      - value
-      - processedDate
     properties:
       value:
         type: number
@@ -138,5 +136,16 @@ definitions:
       carolinePart:
         type: number
         description: Caroline's part of the amount
-        
-        
+  AmountForCreation:
+    type: object
+    allOf:     # Combines the BasicErrorModel and the inline model
+      - $ref: '#/definitions/Amount'
+      - type: object
+    required:
+      - value
+      - processedDate
+  AmountForUpdate:
+    type: object
+    allOf:     # Combines the BasicErrorModel and the inline model
+      - $ref: '#/definitions/Amount'
+      - type: object

@@ -44,6 +44,7 @@ module.exports = (function () {
           },
           save(doc, collectionName){
             return new Promise((resolve, reject) => {
+              docData['updated'] = new Date();
               const collection = db.collection(collectionName);
               collection.insertOne(doc, function(err, res) {
                 if (err) reject(err);
@@ -54,7 +55,9 @@ module.exports = (function () {
                 };
                 resolve(response);
               });
-            });
+            });;
+
+            resolve(response);
           },
           find(id, collectionName){
             return new Promise((resolve, reject) => {
@@ -68,7 +71,6 @@ module.exports = (function () {
                     "collection": collectionName,
                     "data": doc
                   }
-
                   resolve(response);
               })
             });
@@ -76,8 +78,28 @@ module.exports = (function () {
           remove(id){
             console.log(`remove ${id}`);
           },
-          update(id){
-            console.log(`update ${id}`);
+          update(id, docData, collectionName){
+            return new Promise((resolve, reject) => {
+              const collection = db.collection(collectionName);
+              docData['updated'] = new Date();
+              console.log(docData);
+              collection.findAndModify(
+                {"_id":ObjectID(id)},
+                [],
+                { "$set": docData },
+                {update: true},
+                function (err, doc, lastErrorObject) {
+                  if(err) reject(err);
+
+                  const response = {
+                    "collection": collectionName,
+                    "data": doc.value,
+                    "operationDetails": doc.lastErrorObject
+                  };
+
+                  resolve(response);
+              });
+            });
           },
           hi() {
             console.log('instance says hello!');

@@ -28,7 +28,8 @@ const db = require('../../config/db');
 module.exports = {
   index:index,
   insert: insert,
-  find: find
+  find: find,
+  update: update
 };
 
 /*
@@ -71,6 +72,19 @@ function find(req, res) {
       res.send(doc);
     }).catch(err => {
       res.json(err.message);
-    });    
+    });
+  });
+}
+
+function update(req, res) {
+  const id = req.swagger.params.id.value;
+  const amountData = req.swagger.params.amount.value;
+  db.getInstance().then(instance => {
+    instance.update(id, amountData, 'amounts').then(doc =>{      
+      res.send(doc);
+    }).catch(err => {
+      res.json(err.message);
+    });
+
   });
 }
