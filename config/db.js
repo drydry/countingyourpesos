@@ -3,6 +3,7 @@
 //Include crypto to generate the id
 const Promise = require('promise'),
   MongoClient = require('mongodb').MongoClient,
+  ObjectID = require('mongodb').ObjectID,
   appConfig = require('config');
 
 // Hack to delete swagger object that's been added automatically
@@ -46,7 +47,7 @@ module.exports = (function () {
               const collection = db.collection(collectionName);
               collection.insertOne(doc, function(err, res) {
                 if (err) reject(err);
-                
+
                 const response = {
                   "collection": collectionName,
                   "data": doc
@@ -55,8 +56,22 @@ module.exports = (function () {
               });
             });
           },
-          find(id){
-            console.log(`find ${id}`);
+          find(id, collectionName){
+            return new Promise((resolve, reject) => {
+              const collection = db.collection(collectionName);
+              collection.findOne({
+                  _id: ObjectID(id)
+              }, function(err, doc) {
+                  if(err) reject(err);
+
+                  const response = {
+                    "collection": collectionName,
+                    "data": doc
+                  }
+
+                  resolve(response);
+              })
+            });
           },
           remove(id){
             console.log(`remove ${id}`);

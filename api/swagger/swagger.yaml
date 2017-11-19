@@ -55,6 +55,27 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /amounts/{id}:
+    x-swagger-router-controller: amounts
+    get:
+      description: Get a specific amount
+      operationId: find
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /hello:
     # binds a127 app logic to a route
     x-swagger-router-controller: hello_world

@@ -27,7 +27,8 @@ const db = require('../../config/db');
  */
 module.exports = {
   index:index,
-  insert: insert
+  insert: insert,
+  find: find
 };
 
 /*
@@ -50,9 +51,9 @@ function index(req, res) {
   });
 }
 
-function insert( req, res) {
+function insert(req, res) {
   const amount = req.swagger.params.amount.value;
-  console.log(amount);
+  amount['inserted'] = new Date();
 
   db.getInstance().then(instance => {
     instance.save(amount, 'amounts').then(doc => {
@@ -60,5 +61,16 @@ function insert( req, res) {
     }).catch(err => {
       res.json(err.message);
     });
+  });
+}
+
+function find(req, res) {
+  const id = req.swagger.params.id.value;
+  db.getInstance().then(instance => {
+    instance.find(id, 'amounts').then(doc => {
+      res.send(doc);
+    }).catch(err => {
+      res.json(err.message);
+    });    
   });
 }
