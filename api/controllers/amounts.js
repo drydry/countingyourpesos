@@ -29,7 +29,8 @@ module.exports = {
   index:index,
   insert: insert,
   find: find,
-  update: update
+  update: update,
+  remove: remove
 };
 
 /*
@@ -54,8 +55,6 @@ function index(req, res) {
 
 function insert(req, res) {
   const amount = req.swagger.params.amount.value;
-  amount['inserted'] = new Date();
-
   db.getInstance().then(instance => {
     instance.save(amount, 'amounts').then(doc => {
       res.send(doc);
@@ -80,11 +79,22 @@ function update(req, res) {
   const id = req.swagger.params.id.value;
   const amountData = req.swagger.params.amount.value;
   db.getInstance().then(instance => {
-    instance.update(id, amountData, 'amounts').then(doc =>{      
+    instance.update(id, amountData, 'amounts').then(doc =>{
       res.send(doc);
     }).catch(err => {
       res.json(err.message);
     });
 
+  });
+}
+
+function remove(req, res) {
+  const id = req.swagger.params.id.value;
+  db.getInstance().then(instance => {
+    instance.remove(id, 'amounts').then(doc => {
+      res.send(doc);
+    }).catch(err => {
+      res.json(err.message);
+    });
   });
 }

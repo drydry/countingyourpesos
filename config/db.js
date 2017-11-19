@@ -75,19 +75,33 @@ module.exports = (function () {
               })
             });
           },
-          remove(id){
-            console.log(`remove ${id}`);
+          remove(id, collectionName, forceDelete){
+            return new Promise((resolve, reject) => {
+              const collection = db.collection(collectionName);
+              //docData['deleted'] = new Date();
+              collection.remove(
+                { "_id": ObjectID(id) },
+                [],
+                function( err, lastErrorObject ) {
+                  if(err) reject(err);
+                  const response = {
+                    "collection": collectionName,
+                    "data": null,
+                    "operationDetails": lastErrorObject
+                  };
+                  resolve(response);
+                });
+            });
           },
           update(id, docData, collectionName){
             return new Promise((resolve, reject) => {
               const collection = db.collection(collectionName);
               docData['updated'] = new Date();
-              console.log(docData);
               collection.findAndModify(
-                {"_id":ObjectID(id)},
+                { "_id": ObjectID(id) },
                 [],
                 { "$set": docData },
-                {update: true},
+                { update: true },
                 function (err, doc, lastErrorObject) {
                   if(err) reject(err);
 
@@ -96,7 +110,6 @@ module.exports = (function () {
                     "data": doc.value,
                     "operationDetails": doc.lastErrorObject
                   };
-
                   resolve(response);
               });
             });
